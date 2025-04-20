@@ -1,6 +1,6 @@
 # Roadmap
 
- 1. Build the foundation: Initially, we should make sure our `main.py` is working as intended as a main hub for the other modules.
+ 1. **Build the foundation:** Initially, we should make sure our `main.py` is working as intended as a main hub for the other modules.
 
  2. **Name fields:** first/given name and surname.
 
