@@ -4,7 +4,7 @@ AGE_WORD_DICT: dict[str, int] = {
     "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90, "hundred": 100
 }
 
-def error_message() -> None:
+def raise_age_error() -> None:
     raise ValueError("The age is misspelled or seems too high. Please check.")
 
 def validate_age(age: int) -> bool:
@@ -16,57 +16,55 @@ def validate_age(age: int) -> bool:
         raise ValueError("That age seems too high. Please enter a realistic age (0-122).")
     return True
 
-def get_age_from_words(age: str) -> int:
-    age_words: list[str] = age.lower().split()
+def get_age_from_words(age_input: str) -> int:
+    age_words: list[str] = age_input.lower().split()
     if len(age_words) != 1:
-        one_to_nine: set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+        units_only: set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9}
         number_list: list[int] = []
         if len(age_words) == 3:
             for word in age_words:
                 if word not in AGE_WORD_DICT.keys():
-                    error_message()
+                    raise_age_error()
                 number_list.append(AGE_WORD_DICT[word])
 
-            if (number_list[0] == 100) and (number_list[1] % 10 == 0 and number_list[1] != 10) and (number_list[2] in one_to_nine):
-                age = sum(number_list)
-                validate_age(age)
-                return age
-            error_message()
+            if (number_list[0] == 100) and (number_list[1] % 10 == 0 and number_list[1] != 10) and (number_list[2] in units_only):
+                parsed_age = sum(number_list)
+                validate_age(parsed_age)
+                return parsed_age
+            raise_age_error()
 
         if len(age_words) == 2:
             for word in age_words:
                 if word not in AGE_WORD_DICT.keys():
-                    error_message()
+                    raise_age_error()
                 number_list.append(AGE_WORD_DICT[word])
 
-            if (number_list[0] % 10 == 0 and number_list[0] != 10) and (number_list[1] in one_to_nine or number_list[1] in range(10, 90)):
-                age = sum(number_list)
-                validate_age(age)
-                return age
-            error_message()
+            if (number_list[0] % 10 == 0 and number_list[0] != 10) and (number_list[1] in units_only or number_list[1] in range(10, 90)):
+                parsed_age = sum(number_list)
+                validate_age(parsed_age)
+                return parsed_age
+            raise_age_error()
 
-        error_message()
+        raise_age_error()
 
-    if age not in AGE_WORD_DICT.keys():
-        error_message()
-    age = AGE_WORD_DICT[age]
-    return age
+    if age_input not in AGE_WORD_DICT.keys():
+        raise_age_error()
+    return AGE_WORD_DICT[age_input]
 
 def get_age(question: str = "Age:") -> int:
     prompt: str = question.strip() + " "
     while True:
         try:
-            age: str = str(input(prompt)).strip().lower()                
-            if all(c.isalnum() or c.isspace() for c in age):
-                if age.isdigit():
-                    age = int(age)
-                    validate_age(age)
-                    return age
-                if age and all(c.isalpha() or c.isspace() for c in age):
-                    if get_age_from_words(age):
-                        age = get_age_from_words(age)
-                        return age
-            validate_age(age)
+            age_input: str = str(input(prompt)).strip().lower()                
+            if all(c.isalnum() or c.isspace() for c in age_input):
+                if age_input.isdigit():
+                    final_age = int(age_input)
+                    validate_age(final_age)
+                    return final_age
+                if age_input and all(c.isalpha() or c.isspace() for c in age_input):
+                    parsed_age = get_age_from_words(age_input)
+                    return parsed_age
+            validate_age(age_input)
         except ValueError as e:
             print(f"Invalid input: {e}")
 
